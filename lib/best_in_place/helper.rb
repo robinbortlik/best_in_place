@@ -17,8 +17,10 @@ module BestInPlace
 
       display_value = build_value_for(real_object, field, opts)
 
-      collection = nil
+      collection = []
       value = nil
+      has_collection_attr = [:select, :checkbox].include?(opts[:type].to_s.to_sym)
+
       if opts[:type] == :select && !opts[:collection].blank?
         value = real_object.send(field)
         display_value = Hash[opts[:collection]].stringify_keys[value.to_s]
@@ -43,7 +45,7 @@ module BestInPlace
       out << " id='#{BestInPlace::Utils.build_best_in_place_id(real_object, field)}'"
       out << " data-url='#{opts[:path].blank? ? url_for(object) : url_for(opts[:path])}'"
       out << " data-object='#{opts[:object_name] || BestInPlace::Utils.object_to_key(real_object)}'"
-      out << " data-collection='#{attribute_escape(collection)}'" unless collection.blank?
+      out << " data-collection='#{attribute_escape(collection)}'" if has_collection_attr
       out << " data-attribute='#{field}'"
       out << " data-activator='#{opts[:activator]}'" unless opts[:activator].blank?
       out << " data-ok-button='#{opts[:ok_button]}'" unless opts[:ok_button].blank?
